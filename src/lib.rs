@@ -89,8 +89,9 @@
 //! 
 //! ---
 //! 
-//! © 2025 — Created by [Blinov Vasily](https://github.com/SAANN3).  
-//! Licensed under MIT
+//! Copyright (c) [SAANN3](https://github.com/SAANN3)
+
+//!This project is licensed under the MIT license ([LICENSE] or <http://opensource.org/licenses/MIT>)
 
 mod context;
 /// Derive macro that creates routes
