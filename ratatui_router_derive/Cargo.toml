@@ -2,6 +2,8 @@
 name = "ratatui_router_derive"
 version = "0.1.0"
 edition = "2024"
+license = "MIT"
+description = "derive macro for ratatui_router"
 
 [dependencies]
 proc-macro2 = "1.0.101"
