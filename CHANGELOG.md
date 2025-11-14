@@ -6,10 +6,12 @@ All notable changes to this project will be documented in this file.
 ### Added
 
 - Changelog file
+- Event trait that lets you pass callback to get specific event, instead of matching event(), corresponding functions ```use_event```. ```use_exit```. ```use_custom_event```. ```use_page_change```
 
 ### Changed
 
-- XXX
+- event function moved from router to trait and now called get_event. Returned value changed from ```&Option<Events<T::Ev>>``` to  ```&Events<T>```
+
 
 ## [1.0.0] - 2025-10-18
 

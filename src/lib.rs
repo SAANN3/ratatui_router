@@ -16,13 +16,15 @@
 //! This library is experimental and may still change or break in future versions.  
 //! Contributions, ideas, and issue reports are welcome on [GitHub](https://github.com/SAANN3/ratatui_router)!
 //! 
+//! List of different routers:
+//! - [`Router`](router::Router) - basic router
 //! ## Example
-//! ```rust
+//! ```no_run 
 //! use crossterm::event::KeyCode;
 //! use ratatui::Frame;
 //! use ratatui::widgets::{Block, Paragraph};
 //! use ratatui_router::ratatui_router_derive::Routes;
-//! use ratatui_router::router::{Events, Routed, Router};
+//! use ratatui_router::{router::*, event::*};
 //! 
 //! #[derive(Routes)]
 //! pub enum MyRoutes {
@@ -32,16 +34,15 @@
 //! 
 //! pub fn Home(ctx: &mut Router<MyRoutes>, frame: &mut Frame, counter: &mut i64) {
 //!     let modifier = ctx.get_context::<i64>();
-//!     if let Some(ev) = ctx.event() {
-//!         match ev {
-//!             Events::Event(crossterm::event::Event::Key(key)) => match key.code {
-//!                 KeyCode::Esc => ctx.exit(),
-//!                 KeyCode::Tab => ctx.change_page(MyRoutes::Modifier),
-//!                 _ => *counter += 1 * *modifier.borrow(),
-//!             },
-//!             _ => {}
-//!         }
-//!     }
+//!     ctx.use_event(|ctx, ev| match ev {
+//!        crossterm::event::Event::Key(key) => match key.code {
+//!            KeyCode::Esc => ctx.exit(),
+//!            KeyCode::Tab => ctx.change_page(MyRoutes::Modifier),
+//!            _ => *counter += 1 * *modifier.borrow(),
+//!        },
+//!        _ => {}
+//!     });
+//!
 //!     let paragraph = Paragraph::new(
 //!         format!("Current counter = {}, press escape to exit, tab to change page, or any other button to increment to {}", counter, *modifier.borrow())
 //!     )
@@ -51,17 +52,15 @@
 //! 
 //! pub fn Modifier(ctx: &mut Router<MyRoutes>, frame: &mut Frame) {
 //!     let modifier = ctx.get_context::<i64>();
-//!     if let Some(ev) = ctx.event() {
-//!         match ev {
-//!             Events::Event(crossterm::event::Event::Key(key)) => match key.code {
-//!                 KeyCode::Esc => ctx.exit(),
-//!                 KeyCode::Tab => {
-//!                     ctx.go_back();
-//!                 }
-//!                 _ => *modifier.borrow_mut() += 1,
-//!             },
-//!             _ => {}
-//!         }
+//!    match ctx.get_event() {
+//!        Events::Event(crossterm::event::Event::Key(key)) => match key.code {
+//!            KeyCode::Esc => ctx.exit(),
+//!            KeyCode::Tab => {
+//!                ctx.go_back();
+//!            }
+//!            _ => *modifier.borrow_mut() += 1,
+//!        },
+//!        _ => {}
 //!     }
 //!     let paragraph = Paragraph::new(
 //!         format!("Current modifier = {}, press escape to exit, tab to change page, or any other button to increment", *modifier.borrow())
@@ -83,10 +82,9 @@
 //! ```
 //! ## Custom events
 //! The [`Routes`](ratatui_router_derive::Routes) macro also allows you to associate **custom event types**
-//! with pages. These can be retrieved later via [`Router::event`](crate::router::Router::event).
+//! with pages. These can be retrieved later via [EventHook::get_event](crate::event::EventHook::get_event).
 //!
 //! See [`Routed::Ev`](crate::router::Routed::Ev) for more details on how events are generated.
-//! 
 //! ---
 //! 
 //! Copyright (c) [SAANN3](https://github.com/SAANN3)
@@ -95,6 +93,8 @@
 
 mod context;
 /// Derive macro that creates routes
-pub  use ratatui_router_derive;
+pub use ratatui_router_derive;
 /// Router
 pub mod router;
+/// Events tab
+pub mod event;
