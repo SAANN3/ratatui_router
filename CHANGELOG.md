@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [1.1.0] - 2025-11-23
+## [0.1.1] - 2025-11-23
 
 ### Added
 - Changelog file
@@ -13,6 +13,6 @@ All notable changes to this project will be documented in this file.
 - event function moved from router to trait and now called get_event. Returned value changed from ```&Option<Events<T::Ev>>``` to  ```&Events<T>```
 
 
-## [1.0.0] - 2025-10-18
+## [0.1.0] - 2025-10-18
 
 # Release!
