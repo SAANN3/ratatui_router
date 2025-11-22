@@ -9,7 +9,7 @@ use std::{
 };
 
 pub use crate::event::{EventHook, Events};
-use crate::{context::Context, event::EventHookMut};
+use crate::{callback::{CallbackHolder, SelfCallbackablePrivate}, context::Context, event::EventHookMut};
 use crossterm::event::{self};
 use ratatui::{DefaultTerminal, Frame};
 /// Trait that will be implemented by [ratatui_router_derive::Routes] derive macro
@@ -97,6 +97,7 @@ where
 }
 /// Handles the render loop and event processing
 pub struct Router<T: Routed> {
+    global_callbacks: CallbackHolder<Self>,
     history: Vec<T>,
     history_length: usize,
     current: Option<T>,
@@ -115,6 +116,7 @@ impl<T: Routed> Router<T> {
     pub fn new(default: T) -> Self {
         let (tx, rx) = channel();
         Self {
+            global_callbacks: CallbackHolder::new(),
             history: Vec::new(),
             history_length: 1,
             current: Some(default),
@@ -328,6 +330,7 @@ impl<T: Routed> Router<T> {
         self.tx.send(Events::PageChanged).unwrap();
     }
 
+
     /// Blocks the current thread and starts main loop of program
     ///
     /// # Example
@@ -370,6 +373,9 @@ impl<T: Routed> Router<T> {
         while self.looping {
             let event = self.rx.recv().expect("Failed to receive");
             self.event = Option::Some(event);
+
+            self.provoke();
+
             terminal.draw(|frame| self.render(frame))?;
             match self.event.unwrap() {
                 Events::Exit => {
@@ -398,8 +404,14 @@ impl<T: Routed> EventHookMut<T::Ev> for Router<T> {
     fn get_event_mut(&mut self) -> &mut Option<Events<T::Ev>> {
         &mut self.event
     }
-    
+
     fn set_event(&mut self, event: Events<T::Ev>) {
         self.event = Some(event);
+    }
+}
+
+impl<T: Routed> SelfCallbackablePrivate for Router<T> {
+    fn get_callback(&mut self) -> &mut CallbackHolder<Self> {
+        &mut self.global_callbacks
     }
 }

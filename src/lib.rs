@@ -18,14 +18,16 @@
 //! 
 //! List of different routers:
 //! - [`Router`](router::Router) - basic router
+//! 
+//! Some [`examples`](https://github.com/SAANN3/ratatui_router/tree/main/examples) repos for quick start
 //! ## Example
 //! ```no_run 
-//! use crossterm::event::KeyCode;
+//! use crossterm::event::{KeyCode, KeyModifiers};
 //! use ratatui::Frame;
 //! use ratatui::widgets::{Block, Paragraph};
+//! use ratatui_router::callback::SelfCallbackable;
 //! use ratatui_router::ratatui_router_derive::Routes;
-//! use ratatui_router::{router::*, event::*};
-//! 
+//! use ratatui_router::router::{EventHook, Events, Routed, Router};
 //! #[derive(Routes)]
 //! pub enum MyRoutes {
 //!     Home { counter: i64 },
@@ -35,14 +37,13 @@
 //! pub fn Home(ctx: &mut Router<MyRoutes>, frame: &mut Frame, counter: &mut i64) {
 //!     let modifier = ctx.get_context::<i64>();
 //!     ctx.use_event(|ctx, ev| match ev {
-//!        crossterm::event::Event::Key(key) => match key.code {
-//!            KeyCode::Esc => ctx.exit(),
-//!            KeyCode::Tab => ctx.change_page(MyRoutes::Modifier),
-//!            _ => *counter += 1 * *modifier.borrow(),
-//!        },
-//!        _ => {}
+//!         crossterm::event::Event::Key(key) => match key.code {
+//!             KeyCode::Tab => ctx.change_page(MyRoutes::Modifier),
+//!             _ => *counter += 1 * *modifier.borrow(),
+//!         },
+//!         _ => {}
 //!     });
-//!
+//! 
 //!     let paragraph = Paragraph::new(
 //!         format!("Current counter = {}, press escape to exit, tab to change page, or any other button to increment to {}", counter, *modifier.borrow())
 //!     )
@@ -52,15 +53,14 @@
 //! 
 //! pub fn Modifier(ctx: &mut Router<MyRoutes>, frame: &mut Frame) {
 //!     let modifier = ctx.get_context::<i64>();
-//!    match ctx.get_event() {
-//!        Events::Event(crossterm::event::Event::Key(key)) => match key.code {
-//!            KeyCode::Esc => ctx.exit(),
-//!            KeyCode::Tab => {
-//!                ctx.go_back();
-//!            }
-//!            _ => *modifier.borrow_mut() += 1,
-//!        },
-//!        _ => {}
+//!     match ctx.get_event() {
+//!         Events::Event(crossterm::event::Event::Key(key)) => match key.code {
+//!             KeyCode::Tab => {
+//!                 ctx.go_back();
+//!             }
+//!             _ => *modifier.borrow_mut() += 1,
+//!         },
+//!         _ => {}
 //!     }
 //!     let paragraph = Paragraph::new(
 //!         format!("Current modifier = {}, press escape to exit, tab to change page, or any other button to increment", *modifier.borrow())
@@ -73,7 +73,22 @@
 //!     color_eyre::install()?;
 //!     let terminal = ratatui::init();
 //!     let mut router = MyRoutes::create_router(MyRoutes::Home { counter: 0 });
-//!     router.create_context::<i64>(1); // You can also create context inside pages
+//!     // Register global callback for exiting
+//!     router.add_callback(|ctx| {
+//!         ctx.use_event(|ctx, ev| match ev {
+//!             crossterm::event::Event::Key(key_event) => match key_event.code {
+//!                 KeyCode::Esc => ctx.exit(),
+//!                 KeyCode::Char(c)
+//!                     if c == 'c' && key_event.modifiers.contains(KeyModifiers::CONTROL) =>
+//!                 {
+//!                     ctx.exit()
+//!                 }
+//!                 _ => {}
+//!             },
+//!             _ => {}
+//!         });
+//!     });
+//!     router.create_context::<i64>(1); // you can also create context inside pages
 //!     router.run(terminal)?;
 //!     ratatui::restore();
 //!     Ok(())
@@ -96,5 +111,7 @@ mod context;
 pub use ratatui_router_derive;
 /// Router
 pub mod router;
-/// Events tab
+/// Event and its hook
 pub mod event;
+/// Handling global callback
+pub mod callback;
