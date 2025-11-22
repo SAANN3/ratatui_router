@@ -1,8 +1,26 @@
 //! # ratatui_router
 //!
+//! <p align="center">
+//!   <a href="https://ratatui.rs">
+//!     <img src="https://ratatui.rs/built-with-ratatui/badge.svg" />
+//!   </a>
+//!   <a href="https://crates.io/crates/ratatui_router">
+//!     <img src="https://img.shields.io/crates/d/ratatui_router?style=flat-square&logo=rust&logoColor=orange&label=downloads&color=orange" />
+//!   </a>
+//!   <a href="https://crates.io/crates/ratatui_router/versions">
+//!     <img src="https://img.shields.io/crates/v/ratatui_router?style=flat&logo=rust&logoColor=orange&label=crates.io&color=orange" />
+//!   </a>
+//!   <a href="https://docs.rs/ratatui_router">
+//!     <img src="https://img.shields.io/docsrs/ratatui_router?style=flat&logo=rust&logoColor=orange&color=orange" />
+//!   </a>
+//!   <a href="https://github.com/SAANN3/ratatui_router">
+//!     <img src="https://img.shields.io/badge/github-repo-blue?style=flat&logo=github&labelColor=grey" />
+//!   </a>
+//! </p>
+//! 
 //! This crate helps with automatic building page-based navigation
 //! for [`ratatui`](https://docs.rs/ratatui).
-//!
+//! 
 //! **Features**
 //! - derive macro [ratatui_router_derive::Routes] that automatically generates routing with pages, from your enum
 //! - Page rendering 

@@ -1,12 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [1.1.0] - 2025-XX-XX
+## [1.1.0] - 2025-11-23
 
 ### Added
-
 - Changelog file
 - Event trait that lets you pass callback to get specific event, instead of matching event(), corresponding functions ```use_event```. ```use_exit```. ```use_custom_event```. ```use_page_change```
+- Global callback handler
 
 ### Changed
 
